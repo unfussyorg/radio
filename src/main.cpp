@@ -6,12 +6,12 @@
 // V2 - Add pot check into loop
 // V2.1 - Add station check into loop
 // V2.2 - Change station with map instead of raw pot values, remove setup connect
-// V2.3 - Add haptic control to pin 21 TB
 
 #include <Arduino.h>
 #include <VS1053.h>
 #include <WiFi.h>
 #include <config.h>
+#include <time.h>
 #define VS1053_CS 5
 #define VS1053_DCS 16
 #define VS1053_DREQ 4
@@ -21,6 +21,11 @@
 
 VS1053 player(VS1053_CS, VS1053_DCS, VS1053_DREQ);
 WiFiClient client;
+
+// get time for packets
+const long gmtOffset_sec = -28800;
+const int daylightOffset_sec = 3600;
+const char *ntpServer = "pool.ntp.org";
 
 // wifi credentials defined in Config.h
 const char *ssid = SSID;
@@ -33,7 +38,7 @@ char *path1 = "/kxlu-hi";
 int httpPort1 = 80;
 char *httpver1 = "HTTP/1.1"; // 1.1 is default, but some streams work better in 1.0 (not chunked)
 // 2 — Deadzone
-// 3 - 90FM KEXP - Replace
+// 3 - 90FM KEXP
 char *host3 = "kexp-mp3-128.streamguys1.com";
 char *path3 = "/kexp128.mp3";
 int httpPort3 = 80;
@@ -51,10 +56,10 @@ char *path7 = "/stream128";
 int httpPort7 = 80;
 char *httpver7 = "HTTP/1.1";
 // 8 — Deadzone
-// 9 - 96 TSF Jazz Paris -- buffer hard to build
-char *host9 = "tsfjazz.ice.infomaniak.ch";
-char *path9 = "/tsfjazz-high";
-int httpPort9 = 80;
+// 9 - 96 WNYU
+char *host9 = "cinema.acs.its.nyu.edu";
+char *path9 = "/wnyu128.mp3";
+int httpPort9 = 8000;
 char *httpver9 = "HTTP/1.1";
 // 10 — Deadzone
 // 11 - 98 KFJC Los Altos Hills
@@ -108,7 +113,7 @@ int activeStation;        // can be any odd number from 1-11. even nums are dead
 int previousStation = -9; // impossible value makes sure it runs through connection flow first time
 
 // haptic
-// const int hapticPin = 21;    // vibration motor board is controlled by GPIO 21
+// const int hapticPin = 21; // vibration motor board is controlled by GPIO 21
 
 unsigned long logLoopCounter = 0;
 
@@ -160,6 +165,8 @@ void playRing(uint8_t b)
 void setup()
 {
   // Serial.begin(115200);
+  // pinMode(hapticPin, OUTPUT); // define pin as output
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer); // get time and hopefully fix packet loss
   mp3buff = (uint8_t *)malloc(VS_BUFF_SIZE);
   ringbuf = (uint8_t *)malloc(RING_BUF_SIZE);
   SPI.begin();
@@ -203,6 +210,9 @@ void loop()
       if (client.connect(host1, httpPort1))
       {
         client.print(String("GET ") + path1 + " " + httpver1 + "\r\nHost: " + host1 + "\r\nConnection: close\r\n\r\n");
+        // digitalWrite(hapticPin, HIGH); // vibrate
+        // delay(200);
+        // digitalWrite(hapticPin, LOW); // stop
       }
     }
     else if (activeStation == 3) // 3
