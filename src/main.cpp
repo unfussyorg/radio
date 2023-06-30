@@ -12,6 +12,8 @@
 #include <WiFi.h>
 #include <config.h>
 #include <time.h>
+// #include <soc/soc.h> // used to remove brownout protection
+// #include <soc/rtc_cntl_reg.h> // used to remove brownout protection
 #define VS1053_CS 5
 #define VS1053_DCS 16
 #define VS1053_DREQ 4
@@ -164,7 +166,8 @@ void playRing(uint8_t b)
 
 void setup()
 {
-  // Serial.begin(115200);
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable detector
+  // Serial.begin(115200);                      // comment out
   // pinMode(hapticPin, OUTPUT); // define pin as output
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer); // get time and hopefully fix packet loss
   mp3buff = (uint8_t *)malloc(VS_BUFF_SIZE);
@@ -311,6 +314,7 @@ void loop()
   }
 
   maxfilechunk = client.available();
+  // Serial.println(maxfilechunk); // Print buffer use in bytes
   if (maxfilechunk > 0)
   {
     if (maxfilechunk > 1024)
@@ -333,7 +337,14 @@ void loop()
   }
   if ((nowMills - logLoopCounter) >= 500)
   {
-    // Serial.printf("Buffer: %d%%\r", rcount * 100 / RING_BUF_SIZE);
+    // Serial.printf("Buffer: %d%%\r", rcount * 100 / RING_BUF_SIZE); // Print buffer use in %
     logLoopCounter = nowMills;
   }
+  /* Check serial buffer
+  if (client.available())
+  {
+    char c = client.read();
+    Serial.print(c);
+  }
+  */
 }
