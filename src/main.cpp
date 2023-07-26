@@ -166,7 +166,7 @@ void playRing(uint8_t b)
 
 void setup()
 {
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable detector
+  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable detector
   // Serial.begin(115200);                      // comment out
   // pinMode(hapticPin, OUTPUT); // define pin as output
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer); // get time and hopefully fix packet loss
@@ -205,9 +205,11 @@ void loop()
     mappedTally = 0;
   }
 
-  if ((!client.connected() || (activeStation != previousStation)) && ((activeStation % 2) != 0)) // if (disconnected OR new station) AND (odd station)
+  if ((!client.connected() || (activeStation != previousStation)) && (((activeStation % 2) != 0) || (activeStation < 1) || (activeStation > 23)))
+
+  /*if ((!client.connected() || (activeStation != previousStation)) && ((activeStation % 2) != 0)) // if (disconnected OR new station) AND (odd station OR <1 OR >23)*/
   {
-    if (activeStation == 1) // 1
+    if (activeStation <= 1) // 1
     {
       // Serial.println("Loop connect 1");
       if (client.connect(host1, httpPort1))
@@ -298,7 +300,7 @@ void loop()
         client.print(String("GET ") + path21 + " " + httpver21 + "\r\nHost: " + host21 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 23) // 23
+    else if (activeStation >= 23) // 23
     {
       // Serial.println("Loop connect 23");
       if (client.connect(host23, httpPort23))
