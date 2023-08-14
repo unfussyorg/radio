@@ -82,7 +82,7 @@ char *path15 = "/";
 int httpPort15 = 8128;
 char *httpver15 = "HTTP/1.1";
 // 16 - Deadzone
-// 17 - 104 Corridos Y No Fantasias
+// 17 - 104 Corridos Y No Fantasias // REPLACE
 char *host17 = "stream-150.zeno.fm";
 char *path17 = "/7xv04r3wzp8uv?zs=IJNAlzc7Sa-y6rlnOKJQ2Q";
 int httpPort17 = 80;
@@ -113,9 +113,6 @@ int tallyCount = 0;       // counts 10 pot readings before we take an average
 int mappedTally = 0;      // a container for the 10 readings pre-average
 int activeStation;        // can be any odd number from 1-11. even nums are deadzone
 int previousStation = -9; // impossible value makes sure it runs through connection flow first time
-
-// haptic
-// const int hapticPin = 21; // vibration motor board is controlled by GPIO 21
 
 unsigned long logLoopCounter = 0;
 
@@ -166,9 +163,7 @@ void playRing(uint8_t b)
 
 void setup()
 {
-  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable detector
   // Serial.begin(115200);                      // comment out
-  // pinMode(hapticPin, OUTPUT); // define pin as output
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer); // get time and hopefully fix packet loss
   mp3buff = (uint8_t *)malloc(VS_BUFF_SIZE);
   ringbuf = (uint8_t *)malloc(RING_BUF_SIZE);
@@ -205,9 +200,7 @@ void loop()
     mappedTally = 0;
   }
 
-  if ((!client.connected() || (activeStation != previousStation)) && (((activeStation % 2) != 0) || (activeStation < 1) || (activeStation > 23)))
-
-  /*if ((!client.connected() || (activeStation != previousStation)) && ((activeStation % 2) != 0)) // if (disconnected OR new station) AND (odd station OR <1 OR >23)*/
+  if ((!client.connected() || (activeStation != previousStation)) && (((activeStation % 2) != 0) || (activeStation < 1) || (activeStation > 23) || (tallyCount == 1)))
   {
     if (activeStation <= 1) // 1
     {
@@ -220,7 +213,7 @@ void loop()
         // digitalWrite(hapticPin, LOW); // stop
       }
     }
-    else if (activeStation == 3) // 3
+    else if (activeStation <= 3) // 3
     {
       // Serial.println("Loop connect 3");
       if (client.connect(host3, httpPort3))
@@ -228,7 +221,7 @@ void loop()
         client.print(String("GET ") + path3 + " " + httpver3 + "\r\nHost: " + host3 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 5) // 5
+    else if (activeStation <= 5) // 5
     {
       // Serial.println("Loop connect 5");
       if (client.connect(host5, httpPort5))
@@ -236,7 +229,7 @@ void loop()
         client.print(String("GET ") + path5 + " " + httpver5 + "\r\nHost: " + host5 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 7) // 7
+    else if (activeStation <= 7) // 7
     {
       // Serial.println("Loop connect 7");
       if (client.connect(host7, httpPort7))
@@ -244,7 +237,7 @@ void loop()
         client.print(String("GET ") + path7 + " " + httpver7 + "\r\nHost: " + host7 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 9) // 9
+    else if (activeStation <= 9) // 9
     {
       // Serial.println("Loop connect 9");
       if (client.connect(host9, httpPort9))
@@ -252,7 +245,7 @@ void loop()
         client.print(String("GET ") + path9 + " " + httpver9 + "\r\nHost: " + host9 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 11) // 11
+    else if (activeStation <= 11) // 11
     {
       // Serial.println("Loop connect 11");
       if (client.connect(host11, httpPort11))
@@ -260,7 +253,7 @@ void loop()
         client.print(String("GET ") + path11 + " " + httpver11 + "\r\nHost: " + host11 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 13) // 13
+    else if (activeStation <= 13) // 13
     {
       // Serial.println("Loop connect 13");
       if (client.connect(host13, httpPort13))
@@ -268,7 +261,7 @@ void loop()
         client.print(String("GET ") + path13 + " " + httpver13 + "\r\nHost: " + host13 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 15) // 15
+    else if (activeStation <= 15) // 15
     {
       // Serial.println("Loop connect 15");
       if (client.connect(host15, httpPort15))
@@ -276,7 +269,7 @@ void loop()
         client.print(String("GET ") + path15 + " " + httpver15 + "\r\nHost: " + host15 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 17) // 17
+    else if (activeStation <= 17) // 17
     {
       // Serial.println("Loop connect 17");
       if (client.connect(host17, httpPort17))
@@ -284,7 +277,7 @@ void loop()
         client.print(String("GET ") + path17 + " " + httpver17 + "\r\nHost: " + host17 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 19) // 19
+    else if (activeStation <= 19) // 19
     {
       // Serial.println("Loop connect 19");
       if (client.connect(host19, httpPort19))
@@ -292,7 +285,7 @@ void loop()
         client.print(String("GET ") + path19 + " " + httpver19 + "\r\nHost: " + host19 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation == 21) // 21
+    else if (activeStation <= 21) // 21
     {
       // Serial.println("Loop connect 21");
       if (client.connect(host21, httpPort21))
@@ -300,7 +293,7 @@ void loop()
         client.print(String("GET ") + path21 + " " + httpver21 + "\r\nHost: " + host21 + "\r\nConnection: close\r\n\r\n");
       }
     }
-    else if (activeStation >= 23) // 23
+    else if (activeStation >= 22) // 23
     {
       // Serial.println("Loop connect 23");
       if (client.connect(host23, httpPort23))
