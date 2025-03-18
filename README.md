@@ -2,6 +2,14 @@
 
 Built on the [Baldram ESP32 Library](https://github.com/baldram/ESP_VS1053_Library) for use with ESP32 & VS1053 boards. This is an internet radio meant to be installed before the amplifier circuit in a KLH Twenty One radio, with no irreversible mods.
 
+#### ESP32 Sketch Upload
+
+1. Platformio: Build in VSCode (check icon in bottom toolbar)
+2. Hold BOOT button next to usb port on ESP32 (marked 100 on my board)
+3. Platformio: Upload in VSCode (right arrow in bottom toolbar)
+4. Wait for console to confirm connection
+5. Release BOOT button
+
 #### Notes
 
 -   Tried using the original KLH variable plate capacitors for tuning-- by reading the values on a separate Nano chip. Failed, couldn't access solder points for the capacitors without destroying the original part.
