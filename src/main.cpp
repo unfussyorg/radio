@@ -32,7 +32,7 @@ const char *ntpServer = "pool.ntp.org";
 // wifi credentials defined in Config.h
 const char *ssid = SSID;
 const char *password = SSID_PASS;
-const uint8_t bssid[6] = {ACCESS_POINT}; // this can be removed if you aren't targeting a specific access point/router
+const uint8_t bssid[6] = {ACCESS_POINT};
 
 // 1 - 88FM KXLU
 char *host1 = "kxlu.streamguys1.com";
