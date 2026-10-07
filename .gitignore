@@ -6,6 +6,7 @@
 .vscode/
 .archive/
 test/
+include/config.h
 platformio.ini
 radio.code-workspace
 
